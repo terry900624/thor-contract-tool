@@ -1,31 +1,22 @@
 {
-  "name": "thorify",
+  "name": "vethor-contract",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "lint": "tslint  --fix -p .",
-    "dev": "export DEBUG=thor:* && ts-node test/repl.test.ts",
-    "prepare": "rm -rf dist/; npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "export DEBUG=thor:* && ts-node test/repl.test.ts"
   },
-  "author": "tony.li@vechain.com",
+  "author": "terry.tao@vechain.com",
   "license": "MIT",
-  "devDependencies": {
-    "debug": "^3.1.0",
-    "repl-x": "^0.1.4",
-    "ts-node": "^5.0.1",
-    "tslint": "^5.9.1",
-    "typescript": "^2.8.1"
-  },
+  "devDependencies": {},
   "dependencies": {
-    "@types/node": "^9.6.4",
-    "blakejs": "^1.1.0",
-    "elliptic": "^6.4.0",
-    "eth-lib": "^0.2.8",
-    "thorjs-tx": "git+ssh://git@gitlab.vechain.com:vechain/thor.js/thorjs-tx.git#master",
-    "web3": "1.0.0-beta.34",
-    "xhr2": "0.1.4"
+    "@types/node": "^10.5.2",
+    "bluebird": "^3.5.1",
+    "ethereumjs-util": "^5.2.0",
+    "keccak": "^1.4.0",
+    "repl-x": "^0.1.4",
+    "request": "^2.87.0",
+    "thor-model-kit": "^0.2.2"
   }
 }

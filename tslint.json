@@ -1,14 +1,77 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
+  "extends": [
+    "tslint-eslint-rules"
+  ],
+  "rules": {
+    "class-name": true,
+    "indent": [
+      true,
+      "spaces"
     ],
-    "jsRules": {},
-    "rules": {
-      "object-literal-sort-keys": false,
-      "no-var-requires": false,
-      "only-arrow-functions": false,
-      "no-shadowed-variable": false
-    },
-    "rulesDirectory": []
+    "no-eval": true,
+    "no-internal-module": true,
+    "no-trailing-whitespace": true,
+    "no-unsafe-finally": true,
+    "no-var-keyword": true,
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "semicolon": [
+      true,
+      "always"
+    ],
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords"
+    ],
+    "ter-indent": [true, 2, {
+      "SwitchCase": 1
+    }],
+    "linebreak-style": [true, "LF"],
+    "no-conditional-assignment": true,
+    "no-console": [true, "error"],
+    "no-control-regex": true,
+    "no-duplicate-case": true,
+    "no-empty": true,
+    "no-ex-assign": true,
+    "no-extra-boolean-cast": true,
+    "no-extra-semi": true,
+    "no-inner-declarations": [
+      true,
+      "both"
+    ],
+    "no-invalid-regexp": true,
+    "no-irregular-whitespace": true,
+    "no-regex-spaces": true,
+    "no-sparse-arrays": true,
+    "no-unexpected-multiline": true,
+    "valid-jsdoc": [
+      true,
+      {
+        "prefer": {
+          "return": "returns"
+        },
+        "requireReturn": false,
+        "requireParamDescription": true,
+        "requireReturnDescription": true,
+        "matchDescription": "^[A-Z][A-Za-z0-9\\s]*[.]$"
+      }
+    ],
+    "valid-typeof": true
+  }
 }

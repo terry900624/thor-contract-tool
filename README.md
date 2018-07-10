@@ -1,76 +1,47 @@
-## Thorify
+## vethor-contract
 
-A web3 adaptor for VeChain Thor RESTful HTTP API.
 
 ## Install
 
 ```
-npm install --save thorify
+
 ```
 
 ## Usage
 
 ``` js
-import Thorify from 'thorify'
-const Web3 = require('web3');
+import {Contract,VeThorRPC} from "vethor-contract";
 
-const thorProvider = new Thorify.ThorHttpProvider('http://localhost:8669');
-const web3 = new Web3(thorProvider);
+Energy test
+let config = {
+  RPC_HOST:"http://localhost",
+  RPC_PORT:8669,
+  ENERGY_ABI:[{'constant':true,'inputs':[],'name':'name','outputs':[{'name':'','type':'string'}],'payable':false,'stateMutability':'pure','type':'function'},{'constant':false,'inputs':[{'name':'_spender','type':'address'},{'name':'_value','type':'uint256'}],'name':'approve','outputs':[{'name':'success','type':'bool'}],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':true,'inputs':[],'name':'totalSupply','outputs':[{'name':'','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':false,'inputs':[{'name':'_from','type':'address'},{'name':'_to','type':'address'},{'name':'_amount','type':'uint256'}],'name':'transferFrom','outputs':[{'name':'success','type':'bool'}],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':true,'inputs':[],'name':'decimals','outputs':[{'name':'','type':'uint8'}],'payable':false,'stateMutability':'pure','type':'function'},{'constant':true,'inputs':[{'name':'_owner','type':'address'}],'name':'balanceOf','outputs':[{'name':'balance','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':true,'inputs':[],'name':'symbol','outputs':[{'name':'','type':'string'}],'payable':false,'stateMutability':'pure','type':'function'},{'constant':false,'inputs':[{'name':'_to','type':'address'},{'name':'_amount','type':'uint256'}],'name':'transfer','outputs':[{'name':'success','type':'bool'}],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':true,'inputs':[],'name':'totalBurned','outputs':[{'name':'','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':true,'inputs':[{'name':'_owner','type':'address'},{'name':'_spender','type':'address'}],'name':'allowance','outputs':[{'name':'remaining','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'anonymous':false,'inputs':[{'indexed':true,'name':'_from','type':'address'},{'indexed':true,'name':'_to','type':'address'},{'indexed':false,'name':'_value','type':'uint256'}],'name':'Transfer','type':'event'},{'anonymous':false,'inputs':[{'indexed':true,'name':'_owner','type':'address'},{'indexed':true,'name':'_spender','type':'address'},{'indexed':false,'name':'_value','type':'uint256'}],'name':'Approval','type':'event'}],
+  ENERGY_ADDR:'0x0000000000000000000000000000456e65726779'
+};
 
-Thorify.extend(web3);
+let vethorRPC = new VeThorRPC(config.RPC_HOST,config.RPC_PORT);
+let energyContract = new Contract(vethorRPC,config.ENERGY_ADDR,config.ENERGY_ABI);
 
-web3.eth.getBlock('latest').then(v=>console.log(v));
-```
+let amount = 1000000;
+let data = energyContract.makeData('transfer(address,uint256)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)]);
 
-## Special Reminder
+let test = async function(){
+  energyContract.sendTransaction([{
+    to:config.ENERGY_ADDR,
+    data:data,
+    value:'0x0'
+  }],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
+  
+  await energyContract.send('transfer(address,uint256)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
+  
+  let balance = await energyContract.call('balanceOf(address)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best')
 
-- There are three special blocknumber in Ethereum: `earliest`,`latest`,`pending`. In VeChain Thor, we introduced `best` block and there is no `pending` block, so they will be replaced with `0` (aka genesis), `best`, `best`
+  let ret = await energyContract.methods('transfer(address,uint256)').send(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
+  console.log("ret:",ret);
+  balance =  await energyContract.methods('balanceOf(address)').call(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best');
+  console.log("balance:",balance);
+}
 
-## Current Web3 method supported:
-
-- [x] eth_getBlockByNumber
-- [x] eth_getBlockByHash
-- [x] eth_blockNumber
-- [x] eth_getBalance
-- [x] eth_getCode
-- [x] eth_getStorageAt
-- [x] eth_sendRawTransaction
-- [x] eth_getTransactionByHash
-- [x] eth_getTransactionReceipt
-- [x] eth_call
-- [x] eth_getLogs
-- [x] eth_sendTransaction(transaction signed with presetted wallet, the real API called behind is `eth_sendRawTransaction`)
-
-## Extended Web3 method
-
-- [x] eth_getEnergy
-- [x] eth_getChainTag
-- [x] eth_getBlockRef
-
-## Licence
-
-This project is licensed under the MIT license, Copyright (c) 2017 VeChain Foundation. For more information see LICENSE.md.
-
-```
-The MIT License
-
-Copyright (c) 2017 VeChain Foundation
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+test();
 ```
