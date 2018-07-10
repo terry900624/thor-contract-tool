@@ -12,7 +12,6 @@
 ``` js
 import {Contract,VeThorRPC} from "vethor-contract";
 
-Energy test
 let config = {
   RPC_HOST:"http://localhost",
   RPC_PORT:8669,
