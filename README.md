@@ -9,10 +9,11 @@
 
 ## Usage
 
+### Energy Test
+
 ``` js
 import {Contract,VeThorRPC} from "vethor-contract";
 
-Energy test
 let config = {
   RPC_HOST:"http://localhost",
   RPC_PORT:8669,
@@ -33,13 +34,9 @@ let test = async function(){
     value:'0x0'
   }],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
   
-  await energyContract.send('transfer(address,uint256)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
-  
-  let balance = await energyContract.call('balanceOf(address)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best')
-
   let ret = await energyContract.methods('transfer(address,uint256)').send(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
   console.log("ret:",ret);
-  balance =  await energyContract.methods('balanceOf(address)').call(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best');
+  let balance =  await energyContract.methods('balanceOf(address)').call(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best');
   console.log("balance:",balance);
 }
 
