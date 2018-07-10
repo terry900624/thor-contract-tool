@@ -4,7 +4,7 @@
 import replx = require("repl-x");
 import {Contract,VeThorRPC} from "../src";
 
-
+/*
 // Energy test
 let config = {
   RPC_HOST:"http://localhost",
@@ -17,27 +17,25 @@ let vethorRPC = new VeThorRPC(config.RPC_HOST,config.RPC_PORT);
 let energyContract = new Contract(vethorRPC,config.ENERGY_ADDR,config.ENERGY_ABI);
 
 let amount = 1000000;
-let data = energyContract.makeData('transfer(address,uint256)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)]);
+let address = 'test account adddress';
+let privKey = 'test privKey';
 
 let test = async function(){
+  let data = energyContract.makeData('transfer(address,uint256)',[address,amount.toString(16)]);
   energyContract.sendTransaction([{
     to:config.ENERGY_ADDR,
     data:data,
     value:'0x0'
-  }],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
+  }],privKey);
   
-  await energyContract.send('transfer(address,uint256)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
-  
-  let balance = await energyContract.call('balanceOf(address)',['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best')
-
-  let ret = await energyContract.methods('transfer(address,uint256)').send(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602',amount.toString(16)],'dce1443bd2ef0c2631adc1c67e5c93f13dc23a41c18b536effbbdcbcdb96fb65');
+  let ret = await energyContract.methods('transfer(address,uint256)').send([address,amount.toString(16)],privKey);
   console.log("ret:",ret);
-  balance =  await energyContract.methods('balanceOf(address)').call(['0xd3ae78222beadb038203be21ed5ce7c9b1bff602'],'best');
+  let balance =  await energyContract.methods('balanceOf(address)').call([address],'best');
   console.log("balance:",balance);
 }
 
 test();
-
+*/
 
 replx.start({ prompt: "Contract# " }, () => {
   return {
