@@ -3,7 +3,7 @@ import createKeccakHash = require('keccak');
 import {IABIFunc,IClause} from './interface';
 import ethUtil = require('ethereumjs-util');
 
-function makeHash(str:string):object{
+function makeHash(str:string):string{
   return createKeccakHash('keccak256').update(str).digest().toString('hex');
 }
 
@@ -11,7 +11,7 @@ export let addressFromPriv = (privKey: string):string => {
   return '0x' + ethUtil.privateToAddress(new Buffer(privKey, 'hex')).toString('hex')
 }   
 
-function intrinsicGas(clauses:IClause[]) {
+function intrinsicGas(clauses:IClause[]):number {
   const txGas = 5000;
   const clauseGas = 16000;
   const clauseGasContractCreation = 48000;
@@ -28,7 +28,7 @@ function intrinsicGas(clauses:IClause[]) {
   }, txGas);
 }
 
-function dataGas(data) {
+function dataGas(data) :number{
   const zgas = 4;
   const nzgas = 68;
   return data.reduce((sum, cur) => {
@@ -38,17 +38,17 @@ function dataGas(data) {
   }, 0);
 }
 
-function makeABI(abi:IABIFunc[]){
+function makeABI(abi:IABIFunc[]): {abi:IABIFunc[],abiFuncHash:any}{
   let abiFuncHash = {};
   for (let i = 0; i < abi.length; i++) {
     let inputStr: string = '';
     let inputArr: string[] = [];
     let abiFuncName: string = '';
     for (let j = 0; j < abi[i].inputs.length; j++) {
-      inputArr.push(abi[i].inputs[j].type);
+      inputArr.push(abi[i].inputs[j].type.trim());
     }
     inputStr = inputArr.join(',');
-    abiFuncName = `${abi[i].name}(${inputStr})`;
+    abiFuncName = `${abi[i].name.trim()}(${inputStr})`;
     abiFuncHash[abiFuncName] = {
       hash:makeHash(abiFuncName),
       isView: abi[i].stateMutability === 'view'

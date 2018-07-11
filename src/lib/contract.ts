@@ -138,7 +138,7 @@ export default class Contract {
   }
 
   async estimateGas(clauses:IClause[],caller:string,revision:string|number='best'):Promise<number>{
-    let gasUsed = 0;
+    let gasUsed:number = 0;
     for(let i = 0;i<clauses.length;i++){
       let body:IContractCall = {
         value:clauses[i].value,
@@ -146,15 +146,8 @@ export default class Contract {
       };
       body.caller = caller;
       let ret = await this.veThorRPC.postAccount(this.address,revision,body);
-      gasUsed += ret.gasUsed
+      gasUsed += Math.round(ret.gasUsed * 1.2); //放大20%执行Gas
     }
     return gasUsed;
   }
 }
-
-export {
-  Contract,
-  BigInt,
-  Bytes32,
-  Address
-};
