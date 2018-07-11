@@ -1,19 +1,19 @@
+interface IInOutPut {
+  indexed?: boolean;
+  name?: string;
+  type?: string;
+  components?: IInOutPut[]
+}
+
 interface IABIFunc {
   anonymous?: boolean;
   constant?: boolean;
-  inputs: {
-    indexed?: boolean;
-    name: string;
-    type: string;
-  }[];
-  outputs?: {
-    name: string;
-    type: string;
-  }[];
-  name: string;
+  inputs?: IInOutPut[];
+  outputs?: IInOutPut[];
+  name?: string;
   payable?: boolean;
   stateMutability?: string;
-  type: string;
+  type?: string;
 }
 
 interface ITransactionOpt {
@@ -208,6 +208,7 @@ interface ITxID {
 
 
 export {
+  IInOutPut,
   IABIFunc,
   ITransactionOpt,
   ICallOpt,

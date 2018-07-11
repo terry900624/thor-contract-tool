@@ -22,7 +22,7 @@ let config = {
 };
 
 let vethorRPC = new VeThorRPC(config.RPC_HOST,config.RPC_PORT);
-let energyContract = new Contract(vethorRPC,config.ENERGY_ADDR,config.ENERGY_ABI);
+let energyContract = new Contract(vethorRPC,config.ENERGY_ABI,config.ENERGY_ADDR);
 
 let amount = 1000000;
 let address = 'test account adddress';

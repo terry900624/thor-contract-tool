@@ -7,19 +7,35 @@ export default class Contract {
 
   address: string;
   abi: IABIFunc[];
-  abiFuncHash: object;
+  abiObj: object;
   veThorRPC:VeThorRPC;
 
-  constructor(veThorRPC:VeThorRPC,address:string,abi:IABIFunc[]) {
+  constructor(veThorRPC:VeThorRPC,abi:IABIFunc[],address:string = null) {
     this.veThorRPC = veThorRPC;
     this.address = address;
     this.abi = abi;
-    let {abiFuncHash} = makeABI(abi);
-    this.abiFuncHash = abiFuncHash;
+    let {abiObj} = makeABI(abi);
+    this.abiObj = abiObj;
   }
 
-  makeData(funcName:string,args:string[]):string{
-    let funcHash = this.abiFuncHash[funcName];
+  async deploy(deployOpt,privateKey:string,opt?:ITransactionOpt){
+    let data = deployOpt.data;
+    let args = deployOpt.args;
+    let params:string = '';
+    for(let i = 0;i < args.length;i++){
+      params+=formatParam(args[i]);
+    }
+    params='';
+    data = `${deployOpt.data}${params}`;
+    if(data.substr(0,2) !== '0x') data = '0x'+data;
+    let clause:IClause = {
+      data: data
+    };
+    return this.sendTransaction([clause],privateKey,opt);
+  }
+
+  makeData(funcName:string,args:any[]):string{
+    let funcHash = this.abiObj[funcName];
     if(!funcHash) throw new Error('function undefined');
     let params:string = '';
     for(let i = 0;i < args.length;i++){
@@ -46,6 +62,7 @@ export default class Contract {
   async getGas(clauses:IClause[],caller:string,revision:string|number='best'):Promise<number>{
     let gas:number = intrinsicGas(clauses);
     let estimateGas:number = await this.estimateGas(clauses,caller,revision);
+    console.log(estimateGas);
     return gas+estimateGas
   }
 
@@ -59,9 +76,9 @@ export default class Contract {
     for(let i=0;i<clauses.length;i++){
       let clause = clauses[i];
       clausesArr.push({
-        to:Address.fromHex(clause.to,'0x'),
-        value:BigInt.from(clause.value),
-        data:Buffer.from(clause.data.slice(2),'hex')
+        to:clause.to?Address.fromHex(clause.to,'0x'):null,
+        value:clause.value?BigInt.from(clause.value):BigInt.from(0),
+        data:clause.data?Buffer.from(clause.data.slice(2),'hex'):null
       });
     }
     let gasPriceCoef:number = opt.gasPriceCoef || 128;
@@ -92,7 +109,7 @@ export default class Contract {
   
   
   methods(funcName:string):IMethodsResult{
-    let funcHash = this.abiFuncHash[funcName];
+    let funcHash = this.abiObj[funcName];
     if(!funcHash) throw new Error('function undefined');
     let _this = this;
     return {
@@ -106,7 +123,7 @@ export default class Contract {
   }
   
   private async call(funcName:string,args:string[],revision:number|string,opt:ICallOpt = null):Promise<IContractCallResult>{
-    let funcHash = this.abiFuncHash[funcName];
+    let funcHash = this.abiObj[funcName];
     if(!funcHash) throw new Error('function undefined');
     let params:string = '';
     for(let i = 0;i < args.length;i++){
@@ -119,11 +136,11 @@ export default class Contract {
     if(opt&&opt.caller) body.caller = opt.caller;
     if(opt&&opt.gas) body.gas = opt.gas;
     if(opt&&opt.gasPrice) body.gasPrice = opt.gasPrice;
-    return await this.veThorRPC.postAccount(this.address,revision,body);
+    return await this.veThorRPC.postAccountByAddress(this.address,revision,body);
   }
 
   private async send(funcName:string,args:string[],privateKey:string,opt?:ITransactionOpt):Promise<ITxID>{
-    let funcHash = this.abiFuncHash[funcName];
+    let funcHash = this.abiObj[funcName];
     if(!funcHash) throw new Error('function undefined');
     let params:string = '';
     for(let i = 0;i < args.length;i++){
@@ -145,7 +162,10 @@ export default class Contract {
         data:clauses[i].data
       };
       body.caller = caller;
-      let ret = await this.veThorRPC.postAccount(this.address,revision,body);
+      let ret:IContractCallResult;
+      if(clauses[i].to)
+        ret = await this.veThorRPC.postAccountByAddress(this.address,revision,body);
+      else ret = await this.veThorRPC.postAccount(revision,body);
       gasUsed += Math.round(ret.gasUsed * 1.2); //放大20%执行Gas
     }
     return gasUsed;

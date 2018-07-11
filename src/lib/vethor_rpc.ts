@@ -40,10 +40,16 @@ export default class VeThorRPC {
     return await this.vethorRequester.request('GET', `/accounts/${address}${query}`);
   }
 
-  async postAccount(address: string, revision: string | number, body: IContractCall): Promise<IContractCallResult> {
+  async postAccountByAddress(address: string, revision: string | number, body: IContractCall): Promise<IContractCallResult> {
     let query = '';
     if (revision) query = `?revision=${revision}`;
     return await this.vethorRequester.request('POST', `/accounts/${address}${query}`, null, body);
+  }
+
+  async postAccount(revision: string | number, body: IContractCall): Promise<IContractCallResult> {
+    let query = '';
+    if (revision) query = `?revision=${revision}`;
+    return await this.vethorRequester.request('POST', `/accounts${query}`, null, body);
   }
 
   async postTransaction(raw: string): Promise<ITxID> {

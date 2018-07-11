@@ -38,8 +38,8 @@ function dataGas(data) :number{
   }, 0);
 }
 
-function makeABI(abi:IABIFunc[]): {abi:IABIFunc[],abiFuncHash:any}{
-  let abiFuncHash = {};
+function makeABI(abi:IABIFunc[]): {abi:IABIFunc[],abiObj:any}{
+  let abiObj = {};
   for (let i = 0; i < abi.length; i++) {
     let inputStr: string = '';
     let inputArr: string[] = [];
@@ -48,13 +48,18 @@ function makeABI(abi:IABIFunc[]): {abi:IABIFunc[],abiFuncHash:any}{
       inputArr.push(abi[i].inputs[j].type.trim());
     }
     inputStr = inputArr.join(',');
-    abiFuncName = `${abi[i].name.trim()}(${inputStr})`;
-    abiFuncHash[abiFuncName] = {
-      hash:makeHash(abiFuncName),
-      isView: abi[i].stateMutability === 'view'
+    if(abi[i].name)
+      abiFuncName = `${abi[i].name.trim()}(${inputStr})`;
+    else abiFuncName = '';
+    let hash = makeHash(abiFuncName);
+    abiObj[abiFuncName] = {
+      hash:hash,
+      stateMutability: abi[i].stateMutability,
+      inputs:abi[i].inputs,
+      outputs:abi[i].outputs
     };
   }
-  return {abi,abiFuncHash};
+  return {abi,abiObj};
 }
 
 function formatParam(param:string){
@@ -65,7 +70,6 @@ function formatParam(param:string){
   }
   return str;
 }
-
 
 export {
   intrinsicGas,

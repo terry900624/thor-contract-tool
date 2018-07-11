@@ -20,11 +20,10 @@ export default class Requester {
       json: true,
       timeout: 90000
     };
-    console.debug(`url:${this.host}:${this.port}${path}`,`method:${method}`,`body:${JSON.stringify(body)}`);
+    console.log(`url:${this.host}:${this.port}${path}`,`method:${method}`,`body:${JSON.stringify(body)}`);
     const response = await (Bluebird.promisify(request) as any)(options);
     if (response.statusCode !== 200) {
-      console.debug('block chain rpc failed', response.body);
-      throw new Error('block chain rpc failed');
+      throw new Error(response.body);
     }
     return response.body;
   }
