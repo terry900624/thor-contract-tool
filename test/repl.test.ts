@@ -17,8 +17,8 @@ let vethorRPC = new VeThorRPC(config.RPC_HOST,config.RPC_PORT);
 let energyContract = new Contract(vethorRPC,config.ENERGY_ADDR,config.ENERGY_ABI);
 
 let amount = 1000000;
-let address = 'test account adddress';
-let privKey = 'test privKey';
+let address = '0x47109a193c49862c89bd76fe2de3585743dd2bb0'; //test address
+let privKey = 'c8c53657e41a8d669349fc287f57457bd746cb1fcfc38cf94d235deb2cfca81b'; //test privkey
 
 let test = async function(){
   let data = energyContract.makeData('transfer(address,uint256)',[address,amount.toString(16)]);
